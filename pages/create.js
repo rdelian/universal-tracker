@@ -10,19 +10,52 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 export default function Create() {
     const [form, setForm] = React.useState({})
     const [days, setDays] = React.useState([])
+    const [frequency, setFrequency] = React.useState(1)
+    const [times, setTimes] = React.useState([])
     const curDate = new Date()
+
+    React.useEffect(() => {
+        // Because useState[1] is async
+        setForm(currentValues => ({
+            ...currentValues,
+            ["days"]: days
+        }))
+    }, [days]);
+
+    React.useEffect(() => {
+        // Because useState[1] is async
+        setForm(currentValues => ({
+            ...currentValues,
+            ["times"]: times
+        }))
+    }, [times]);
 
     const handleChange = e => {
         e.persist();
-        console.log(e.target.name, e.target.checked)
         if (e.target.name == 'days') {
-
+            if (e.target.checked) {
+                setDays(currentValues => ([
+                    ...currentValues,
+                    Number(e.target.value)
+                ]))
+            } else {
+                // is there a better way?
+                let oldDays = [...days]
+                const index = oldDays.findIndex(day => day == e.target.value)
+                oldDays.splice(index, 1)
+                setDays([...oldDays])
+            }
         } else {
             setForm(currentValues => ({
                 ...currentValues,
                 [e.target.name]: e.target.value
             }))
         }
+    }
+
+    const handleFrequency = e => {
+        e.persist();
+        setFrequency(e.target.value)
     }
 
     const createTrack = async e => {
@@ -37,7 +70,8 @@ export default function Create() {
         console.log("sv response:", response.json())
     }
 
-    console.log(form)
+    console.log('form:', form) // DEBUG
+    console.log('times:', frequency) // DEBUG
 
     return (
         <>
@@ -50,7 +84,7 @@ export default function Create() {
                             <p>Type of answer</p>
                             <RadioGroup aria-label="typeAnswerRadio" name="typeAnswerRadio">
                                 <span>
-                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="bool" control={<Radio />} label="Yes/No" />
+                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="bool"   control={<Radio />} label="Yes/No" />
                                     <FormControlLabel onChange={handleChange} name="typeAnswer" value="number" control={<Radio />} label="Number" />
                                     <FormControlLabel onChange={handleChange} name="typeAnswer" value="string" control={<Radio />} label="Text" />
                                 </span>
@@ -68,8 +102,9 @@ export default function Create() {
                                 (day, index) => <FormControlLabel
                                     control={<Checkbox name={'days'} />}
                                     label={day}
-                                    onChange={handleChange}
                                     value={index}
+                                    key={day + index}
+                                    onChange={handleChange}
                                 />
                             )}
                         </span>
@@ -78,25 +113,26 @@ export default function Create() {
                             <p>How many times per day</p>
                             <RadioGroup aria-label="gender" name="gender1">
                                 <span>
-                                    <FormControlLabel value="female" control={<Radio />} label="1" />
-                                    <FormControlLabel value="male" control={<Radio />} label="2" />
-                                    <FormControlLabel value="other" control={<Radio />} label="3" />
-                                    <FormControlLabel value="other" control={<Radio />} label="Custom" />
+                                    <FormControlLabel onChange={handleFrequency} name="times" value="1" control={<Radio />} label="1" />
+                                    <FormControlLabel onChange={handleFrequency} name="times" value="2" control={<Radio />} label="2" />
+                                    <FormControlLabel onChange={handleFrequency} name="times" value="3" control={<Radio />} label="3" />
+                                    <FormControlLabel onChange={handleFrequency} name="times" value="0" control={<Radio />} label="Custom" disabled />
                                 </span>
                             </RadioGroup>
                         </span>
 
                         <span>
                             <p>Select the hour</p>
-                            <TextField
-                                id="time"
-                                label=""
+                            {[...Array(Number(frequency))].map((_, index) => <TextField
+                                id={"time" + index}
                                 type="time"
-                                defaultValue="07:30"
+                                defaultValue="12:30"
+                                onChange={console.log}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                            />
+                            />)}
+                            
                         </span>
 
                         <span>
@@ -112,7 +148,7 @@ export default function Create() {
                             />
                         </span>
 
-                        <button type="submit">create track</button>
+                        <button type="submit">Create Track</button>
                     </FormGroup>
                 </form>
             </Container>
