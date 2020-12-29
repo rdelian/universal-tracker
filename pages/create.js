@@ -8,19 +8,19 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 
 export default function Create() {
-    const [form, setForm] = React.useState({})
-    const [days, setDays] = React.useState([])
+    const [form, setForm] = React.useState({ "days": 0 })
     const [frequency, setFrequency] = React.useState(1)
     const [times, setTimes] = React.useState([])
     const curDate = new Date()
-
-    React.useEffect(() => {
-        // Because useState[1] is async
-        setForm(currentValues => ({
-            ...currentValues,
-            ["days"]: days
-        }))
-    }, [days]);
+    // const days = {
+    //     1: "Monday",
+    //     2: "Tuesday",
+    //     4: "Wednesday",
+    //     8: "Thursday",
+    //     16: "Friday",
+    //     32: "Saturday",
+    //     64: "Sunday"
+    // }
 
     React.useEffect(() => {
         // Because useState[1] is async
@@ -31,26 +31,24 @@ export default function Create() {
     }, [times]);
 
     const handleChange = e => {
+        let temp = null
         e.persist();
         if (e.target.name == 'days') {
+            // bitmask
+            // reverse the bitmask with: bitmask_value & (1 << for_index);
+            temp = Number(e.target.value)
             if (e.target.checked) {
-                setDays(currentValues => ([
-                    ...currentValues,
-                    Number(e.target.value)
-                ]))
+                temp = form['days'] + temp
             } else {
-                // is there a better way?
-                let oldDays = [...days]
-                const index = oldDays.findIndex(day => day == e.target.value)
-                oldDays.splice(index, 1)
-                setDays([...oldDays])
+                console.log('not checked', typeof (temp))
+                temp = form['days'] - temp
             }
-        } else {
-            setForm(currentValues => ({
-                ...currentValues,
-                [e.target.name]: e.target.value
-            }))
         }
+
+        setForm(currentValues => ({
+            ...currentValues,
+            [e.target.name]: temp != null ? temp : e.target.value
+        }))
     }
 
     const handleFrequency = e => {
@@ -84,7 +82,7 @@ export default function Create() {
                             <p>Type of answer</p>
                             <RadioGroup aria-label="typeAnswerRadio" name="typeAnswerRadio">
                                 <span>
-                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="bool"   control={<Radio />} label="Yes/No" />
+                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="bool" control={<Radio />} label="Yes/No" />
                                     <FormControlLabel onChange={handleChange} name="typeAnswer" value="number" control={<Radio />} label="Number" />
                                     <FormControlLabel onChange={handleChange} name="typeAnswer" value="string" control={<Radio />} label="Text" />
                                 </span>
@@ -102,7 +100,7 @@ export default function Create() {
                                 (day, index) => <FormControlLabel
                                     control={<Checkbox name={'days'} />}
                                     label={day}
-                                    value={index}
+                                    value={Math.pow(2, index)}
                                     key={day + index}
                                     onChange={handleChange}
                                 />
@@ -132,7 +130,6 @@ export default function Create() {
                                     shrink: true,
                                 }}
                             />)}
-                            
                         </span>
 
                         <span>
