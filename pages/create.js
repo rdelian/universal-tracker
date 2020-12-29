@@ -4,35 +4,22 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 
 export default function Create() {
-    const [form, setForm] = React.useState({ "days": 0 })
-    const [frequency, setFrequency] = React.useState(1)
-    const [times, setTimes] = React.useState([])
     const curDate = new Date()
-    // const days = {
-    //     1: "Monday",
-    //     2: "Tuesday",
-    //     4: "Wednesday",
-    //     8: "Thursday",
-    //     16: "Friday",
-    //     32: "Saturday",
-    //     64: "Sunday"
-    // }
-
-    React.useEffect(() => {
-        // Because useState[1] is async
-        setForm(currentValues => ({
-            ...currentValues,
-            ["times"]: times
-        }))
-    }, [times]);
+    const [form, setForm] = React.useState({
+        "days": 0,
+        "time": "12:00",
+        "date": new Date(curDate.getFullYear() + 1, curDate.getMonth() + 1, 0).toISOString().slice(0, 10)
+    })
+    // const days = { 1: "Monday", 2: "Tuesday", 4: "Wednesday", 8: "Thursday", 16: "Friday", 32: "Saturday", 64: "Sunday" }
 
     const handleChange = e => {
         let temp = null
-        e.persist();
+        e.persist()
         if (e.target.name == 'days') {
             // bitmask
             // reverse the bitmask with: bitmask_value & (1 << for_index);
@@ -40,36 +27,28 @@ export default function Create() {
             if (e.target.checked) {
                 temp = form['days'] + temp
             } else {
-                console.log('not checked', typeof (temp))
                 temp = form['days'] - temp
             }
         }
-
         setForm(currentValues => ({
             ...currentValues,
             [e.target.name]: temp != null ? temp : e.target.value
         }))
     }
 
-    const handleFrequency = e => {
-        e.persist();
-        setFrequency(e.target.value)
-    }
-
-    const createTrack = async e => {
+    const createTrack = e => {
         e.preventDefault()
-        const response = await fetch('api/createtrack', {
+        // TODO: Check if all data exists
+        fetch('api/createtrack', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(form) // body data type must match "Content-Type" header
+            body: JSON.stringify(form)
         });
-        console.log("sv response:", response.json())
     }
 
-    console.log('form:', form) // DEBUG
-    console.log('times:', frequency) // DEBUG
+    console.log('form:', form)
 
     return (
         <>
@@ -82,17 +61,15 @@ export default function Create() {
                             <p>Type of answer</p>
                             <RadioGroup aria-label="typeAnswerRadio" name="typeAnswerRadio">
                                 <span>
-                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="bool" control={<Radio />} label="Yes/No" />
-                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="number" control={<Radio />} label="Number" />
-                                    <FormControlLabel onChange={handleChange} name="typeAnswer" value="string" control={<Radio />} label="Text" />
+                                    <FormControlLabel onChange={handleChange} name="answerType" value="bool" control={<Radio />} label="Yes/No" />
+                                    <FormControlLabel onChange={handleChange} name="answerType" value="number" control={<Radio />} label="Number" />
+                                    <FormControlLabel onChange={handleChange} name="answerType" value="string" control={<Radio />} label="Text" />
                                 </span>
                             </RadioGroup>
                         </span>
 
-                        <span>
-                            <p>What do you want to track</p>
-                            <TextField id="outlined-basic" label="Track name" variant="outlined" onChange={handleChange} name="trackName" />
-                        </span>
+                        <p>What do you want to track</p>
+                        <TextField id="outlined-basic" label="Track name" variant="outlined" onChange={handleChange} name="trackName" />
 
                         <span>
                             <p>In which days</p>
@@ -107,45 +84,25 @@ export default function Create() {
                             )}
                         </span>
 
-                        <span>
-                            <p>How many times per day</p>
-                            <RadioGroup aria-label="gender" name="gender1">
-                                <span>
-                                    <FormControlLabel onChange={handleFrequency} name="times" value="1" control={<Radio />} label="1" />
-                                    <FormControlLabel onChange={handleFrequency} name="times" value="2" control={<Radio />} label="2" />
-                                    <FormControlLabel onChange={handleFrequency} name="times" value="3" control={<Radio />} label="3" />
-                                    <FormControlLabel onChange={handleFrequency} name="times" value="0" control={<Radio />} label="Custom" disabled />
-                                </span>
-                            </RadioGroup>
-                        </span>
+                        <p>Select the hour</p>
+                        <TextField
+                            id={"time"}
+                            type="time"
+                            defaultValue="12:30"
+                            onChange={handleChange}
+                            name="hour"
+                        />
+                        <p>Set finish date</p>
+                        <TextField
+                            id="date"
+                            name="finishDate"
+                            type="date"
+                            onChange={handleChange}
+                            defaultValue={new Date(curDate.getFullYear() + 1, curDate.getMonth() + 1, 0).toISOString().slice(0, 10)}
 
-                        <span>
-                            <p>Select the hour</p>
-                            {[...Array(Number(frequency))].map((_, index) => <TextField
-                                id={"time" + index}
-                                type="time"
-                                defaultValue="12:30"
-                                onChange={console.log}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />)}
-                        </span>
-
-                        <span>
-                            <p>Set finish date</p>
-                            <TextField
-                                id="date"
-                                label=""
-                                type="date"
-                                defaultValue={new Date(curDate.getFullYear() + 1, curDate.getMonth() + 1, 0).toISOString().slice(0, 10)}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        </span>
-
-                        <button type="submit">Create Track</button>
+                        />
+                        <br></br>
+                        <Button variant="contained" color="primary" type="submit">Create Track</Button>
                     </FormGroup>
                 </form>
             </Container>
