@@ -1,18 +1,14 @@
+import { CheckParams, Error } from '../../helpers/network'
+
 export default async (req, res) => {
-
-    // Get data from the request
-    // const { email, username, fbuid } = req.body
-
-    try {
-        console.log('params:', req.body)
+    console.log('params:', req.body)
+    if (CheckParams(["days", "time", "date", "answerType", "trackName"], req.body)) {
         res.status(201)
-        res.json({"suc": 'ces'})
+        res.json({"user": true})
         // res.json({ user })
-    } catch (error) {
-        console.log('err', error)
+    } else {
+        console.log("Something's wrong")
         res.status(500)
-        res.json({ error: 'error message' })
-    } finally {
-        console.log('final')
+        res.json(Error("user created"))
     }
 }
