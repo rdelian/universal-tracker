@@ -33,6 +33,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# credentials
 .env
 
+# prisma
 /prisma/migrations
+
+# Visual Studio Code
+.vscode

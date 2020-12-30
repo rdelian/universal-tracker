@@ -39,13 +39,14 @@ export default function Create() {
     const createTrack = e => {
         e.preventDefault()
         // TODO: Check if all data exists
-        fetch('api/createtrack', {
+        const response = fetch('api/createtrack', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(form)
         });
+        console.log(response)
     }
 
     console.log('form:', form)
@@ -62,8 +63,8 @@ export default function Create() {
                             <RadioGroup aria-label="typeAnswerRadio" name="typeAnswerRadio">
                                 <span>
                                     <FormControlLabel onChange={handleChange} name="answerType" value="bool" control={<Radio />} label="Yes/No" />
-                                    <FormControlLabel onChange={handleChange} name="answerType" value="number" control={<Radio />} label="Number" />
-                                    <FormControlLabel onChange={handleChange} name="answerType" value="string" control={<Radio />} label="Text" />
+                                    <FormControlLabel onChange={handleChange} name="answerType" value="int" control={<Radio />} label="Number" />
+                                    <FormControlLabel onChange={handleChange} name="answerType" value="str" control={<Radio />} label="Text" />
                                 </span>
                             </RadioGroup>
                         </span>
@@ -99,7 +100,6 @@ export default function Create() {
                             type="date"
                             onChange={handleChange}
                             defaultValue={new Date(curDate.getFullYear() + 1, curDate.getMonth() + 1, 0).toISOString().slice(0, 10)}
-
                         />
                         <br></br>
                         <Button variant="contained" color="primary" type="submit">Create Track</Button>
