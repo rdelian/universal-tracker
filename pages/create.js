@@ -36,17 +36,17 @@ export default function Create() {
         }))
     }
 
-    const createTrack = e => {
+    const createTrack = async e => {
         e.preventDefault()
         // TODO: Check if all data exists
-        const response = fetch('api/createtrack', {
+        const response = await fetch('api/createtrack', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(form)
         });
-        console.log(response)
+        console.log(response.json())
     }
 
     console.log('form:', form)
