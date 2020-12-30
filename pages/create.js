@@ -12,7 +12,7 @@ export default function Create() {
     const curDate = new Date()
     const [form, setForm] = React.useState({
         "days": 0,
-        "time": "12:00",
+        "hour": "12:00",
         "date": new Date(curDate.getFullYear() + 1, curDate.getMonth() + 1, 0).toISOString().slice(0, 10)
     })
     // const days = { 1: "Monday", 2: "Tuesday", 4: "Wednesday", 8: "Thursday", 16: "Friday", 32: "Saturday", 64: "Sunday" }
@@ -38,7 +38,7 @@ export default function Create() {
 
     const createTrack = async e => {
         e.preventDefault()
-        // TODO: Check if all data exists
+        // TODO Check if all data exists
         const response = await fetch('api/createtrack', {
             method: 'POST',
             headers: {
@@ -46,7 +46,7 @@ export default function Create() {
             },
             body: JSON.stringify(form)
         });
-        console.log(response.json())
+        console.log(response.status)
     }
 
     console.log('form:', form)
@@ -74,7 +74,7 @@ export default function Create() {
 
                         <span>
                             <p>In which days</p>
-                            {["M", "T", "W", "T", "F", "S", "S"].map(
+                            {["S", "M", "T", "W", "T", "F", "S"].map(
                                 (day, index) => <FormControlLabel
                                     control={<Checkbox name={'days'} />}
                                     label={day}
@@ -87,13 +87,14 @@ export default function Create() {
 
                         <p>Select the hour</p>
                         <TextField
-                            id={"time"}
-                            type="time"
+                            id={"hour"}
+                            type="hour"
                             defaultValue="12:30"
                             onChange={handleChange}
                             name="hour"
                         />
-                        <p>Set finish date</p>
+                        <p>Set finish date<br></br><small>pause it at any time</small></p>
+
                         <TextField
                             id="date"
                             name="finishDate"
