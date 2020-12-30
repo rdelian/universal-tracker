@@ -1,11 +1,37 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model responsetypes {
+  id     Int      @id @default(autoincrement())
+  type   String   @unique
+  tracks tracks[]
+}
+
+model tracks {
+  id            Int           @id @default(autoincrement())
+  user          Int
+  responseType  Int
+  title         String
+  days          Int
+  hour          String
+  createDate    DateTime
+  nextDate      DateTime
+  finishDate    DateTime
+  responsetypes responsetypes @relation(fields: [responseType], references: [id])
+  users         users         @relation(fields: [user], references: [id])
+
+  @@index([responseType], name: "fk_tracks_responseTypes1_idx")
+  @@index([user], name: "fk_tracks_users_idx")
+}
+
+model users {
+  id     Int      @id
+  ref    Int?     @unique
+  tracks tracks[]
 }
