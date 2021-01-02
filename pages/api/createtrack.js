@@ -3,7 +3,7 @@ import { GetNextDate } from '../../helpers/track'
 import { PrismaClient } from '@prisma/client'
 
 export default async (req, res) => {
-    const prisma = new PrismaClient({ log: ["query"] })
+    const prisma = new PrismaClient()
     const params = ["days", "hour", "date", "answerType", "trackName"]
 
     try {
@@ -20,7 +20,7 @@ export default async (req, res) => {
                     days: days,
                     hour: hour,
                     createDate: new Date(),
-                    nextDate: GetNextDate(new Date(), hour, days), // TODO: Build next date based on days
+                    nextDate: GetNextDate(new Date(), hour, days),
                     finishDate: new Date(date)
                 }
             })
