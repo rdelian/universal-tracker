@@ -1,31 +1,29 @@
-import { RssFeedTwoTone } from '@material-ui/icons'
+import { PrismaClient } from '@prisma/client'
 
-const webPush = require('web-push')
-
-webPush.setVapidDetails(
-    `mailto:${process.env.WEB_PUSH_EMAIL}`,
-    process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
-    process.env.WEB_PUSH_PRIVATE_KEY
-)
-
-export default (req, res) => {
-    if (req.method == 'POST') {
-        const { subscription } = req.body
-
-        webPush
-            .sendNotification(subscription, JSON.stringify({ title: 'Universal Tracker', message: 'Cate flotari ai bagat azi bosultane?' }))
-            .then(response => {
-                res.writeHead(response.statusCode, response.headers).end(response.body)
-            })
-            .catch(err => {
-                if ('statusCode' in err) {
-                    res.writeHead(err.statusCode, err.headers).end(err.body)
-                } else {
-                    console.error(err)
-                    res.status(500).end()
+export default async (req, res) => {
+    const prisma = new PrismaClient()
+    const { subscription } = req.body
+    try {
+        if (req.method === 'POST') {
+            console.log('[notification]', subscription);
+            const temp = await prisma.notifications.create({
+                "data": {
+                    users: {
+                        connect: { id: subscription.user } // TODO: Get logged user.id
+                    }, 
+                    token: subscription.endpoint,
+                    p256dh: subscription.keys.p256dh,
+                    auth: subscription.keys.auth
                 }
             })
-    } else {
-        res.status(405).end()
+            console.log(temp)
+        } else if (req.method === 'DELETE') {
+            // TODO: Delete subs
+        }
+        res.status(201).end()
+    } catch (e) {
+        res.status(500).json({ "error": "something went wrong. " + e })
+    } finally {
+        await prisma.$disconnect()
     }
 }

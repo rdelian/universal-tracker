@@ -12,6 +12,7 @@ export default async (req, res) => {
             const rTypedId = await prisma.responsetypes.findFirst({
                 where: { type: answerType }
             })
+            console.log('rTypedId', rTypedId)
             const track = await prisma.tracks.create({
                 "data": {
                     users: { connect: { id: 1 } }, // TODO: Get logged user.id
