@@ -60,8 +60,21 @@ export default function Subscribe() {
 
     const unsubscribeButtonOnClick = async event => {
         event.preventDefault()
+        console.log(subscription)
         await subscription.unsubscribe()
         // TODO: you should call your API to delete or invalidate subscription data on server
+        const temp = JSON.parse(
+            JSON.stringify(subscription)
+        )
+        fetch('/api/notification', {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                subscription: { ...temp, user: 1 } // TODO: Get logged user.id
+            })
+        })
         setSubscription(null)
         setIsSubscribed(false)
         console.log('web push unsubscribed!')
