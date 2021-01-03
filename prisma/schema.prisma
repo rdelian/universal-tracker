@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model notifications {
+  id     Int    @id @default(autoincrement())
+  user   Int
+  token  String
+  p256dh String
+  auth   String
+  users  users  @relation(fields: [user], references: [id])
+
+  @@index([user], name: "fk_notifications_users1_idx")
+}
+
 model responsetypes {
   id     Int      @id @default(autoincrement())
   type   String   @unique
@@ -31,7 +42,8 @@ model tracks {
 }
 
 model users {
-  id     Int      @id
-  ref    Int?     @unique
-  tracks tracks[]
+  id            Int             @id
+  ref           Int?            @unique
+  notifications notifications[]
+  tracks        tracks[]
 }
