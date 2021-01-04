@@ -14,7 +14,7 @@ export default (req, res) => {
         console.log("req.body:", req.body)
         console.log("api:", subscription)
         webPush
-            .sendNotification(subscription, JSON.stringify({ title: 'Universal Tracker', message: 'Cate flotari ai bagat azi bosultane?' }))
+            .sendNotification(subscription, JSON.stringify({ title: 'Universal Tracker', message: 'Cate flotari ai bagat azi bosultane?', data: { trackId: 1 } }))
             .then(response => {
                 res.writeHead(response.statusCode, response.headers).end(response.body)
             })
