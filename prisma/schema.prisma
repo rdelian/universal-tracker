@@ -36,14 +36,25 @@ model tracks {
   finishDate    DateTime
   responsetypes responsetypes @relation(fields: [responseType], references: [id])
   users         users         @relation(fields: [user], references: [id])
+  trackvalues   trackvalues[]
 
   @@index([responseType], name: "fk_tracks_responseTypes1_idx")
   @@index([user], name: "fk_tracks_users_idx")
 }
 
 model users {
-  id            Int             @id
+  id            Int             @id @default(autoincrement())
   ref           Int?            @unique
   notifications notifications[]
   tracks        tracks[]
+}
+
+model trackvalues {
+  id         Int      @id @default(autoincrement())
+  track      Int
+  value      String?
+  createDate DateTime
+  tracks     tracks   @relation(fields: [track], references: [id])
+
+  @@index([track], name: "fk_trackvalues_tracks1_idx")
 }
