@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
+import Button from '@material-ui/core/Button';
 
 const base64ToUint8Array = base64 => {
     const padding = '='.repeat((4 - (base64.length % 4)) % 4)
@@ -80,36 +81,15 @@ export default function Subscribe() {
         console.log('web push unsubscribed!')
     }
 
-    const sendNotificationButtonOnClick = async event => {
-        event.preventDefault()
-        if (subscription == null) {
-            console.error('web push not subscribed')
-            return
-        }
-
-        await fetch('/api/notification', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                subscription
-            })
-        })
-    }
-
     return (
         <>
             <h1>Next.js + PWA = AWESOME!</h1>
-            <button onClick={subscribeButtonOnClick} disabled={isSubscribed}>
+            <Button variant="contained" onClick={subscribeButtonOnClick} disabled={isSubscribed}>
                 Subscribe
-            </button>
-            <button onClick={unsubscribeButtonOnClick} disabled={!isSubscribed}>
+            </Button>
+            <Button variant="contained" onClick={unsubscribeButtonOnClick} disabled={!isSubscribed}>
                 Unsubscribe
-            </button>
-            <button onClick={sendNotificationButtonOnClick} disabled={!isSubscribed}>
-                Send Notification
-            </button>
+            </Button>
         </>
     )
 }

@@ -8,13 +8,13 @@ webPush.setVapidDetails(
     process.env.WEB_PUSH_PRIVATE_KEY
 )
 
-export default (req, res) => {
+export default async (req, res) => {
     if (req.method == 'POST') {
-        const { subscription } = req.body
+        const { subscription, user, data } = req.body
         console.log("req.body:", req.body)
         console.log("api:", subscription)
         webPush
-            .sendNotification(subscription, JSON.stringify({ title: 'Universal Tracker', message: 'Cate flotari ai bagat azi bosultane?', data: { trackId: 1 } }))
+            .sendNotification(subscription, JSON.stringify({ title: data.title, message: data.message, data: data.data }))
             .then(response => {
                 res.writeHead(response.statusCode, response.headers).end(response.body)
             })
