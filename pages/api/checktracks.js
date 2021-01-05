@@ -19,6 +19,11 @@ export default async (req, res) => {
             prisma.notifications.findMany({
                 where: { user: tracks[i].user }
             }).then(notifications => {
+                // const trackValue = prisma.trackvalues.create({
+                //     data: {
+                //         track: { connect: { id: tracks[i].id } },
+                //     }
+                // })
                 for (let i = 0; i < notifications.length; i++) {
                     fetch('http://localhost:3000/api/postNotification', { // FIXME: https://stackoverflow.com/questions/44342226/next-js-error-only-absolute-urls-are-supported
                         method: 'POST',
@@ -29,9 +34,11 @@ export default async (req, res) => {
                             user: notifications[i].user,
                             data: {
                                 title: "Universal Tracker", message: tracks[i].title,
-                                data: {
-                                    trackId: tracks[i].id
-                                }
+                                // data: {
+                                //     trackId: tracks[i].id,
+                                //     valueId: trackValue.id,
+                                //     responseType: tracks[i].responseType // TODO: Build a var with responseType at buildtype (staticprops or whatever)
+                                // }
                             },
                             subscription: {
                                 endpoint: notifications[i].token,
