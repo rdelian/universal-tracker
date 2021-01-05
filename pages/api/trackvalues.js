@@ -11,6 +11,7 @@ export default async (req, res) => {
                 where: { tracks: { user: Number(user) } },
                 include: { tracks: true }
             })
+            // console.log(tracksvalues)
             res.setHeader('Content-Type', 'application/json')
             res.status(201).end(JSON.stringify({ tracksvalues }))
         }

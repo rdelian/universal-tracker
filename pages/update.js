@@ -1,3 +1,4 @@
+import { Container, Grid } from '@material-ui/core';
 import React from 'react';
 import UpdateTrack from '../components/UpdateTrack'
 
@@ -13,8 +14,16 @@ export default function Update() {
     }, [])
 
     return (
-        <>
-            {tracks.map((track) => <UpdateTrack trackData={track} />)}
-        </>
+        <Container>
+            <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={3}
+            >
+                {tracks.map((track) => <UpdateTrack trackData={track} />)}
+            </Grid>
+        </Container>
     )
 }
